@@ -1,0 +1,37 @@
+Sub AddPaidWatermark()
+Application.ScreenUpdating = False
+Dim sWdth As Single, Shp As Shape
+With ActiveDocument.Sections(1)
+With .PageSetup
+    sWdth = .PageWidth - .LeftMargin - .RightMargin - .Gutter
+End With     
+    With .Headers(wdHeaderFooterPrimary)
+    If .Range.Characters.First.Information(wdWithInTable) = True Then
+        With .Range.Tables(1)
+        .Rows.Add .Rows(1)
+        .Split .Rows(2)
+        End With
+        .Range.Tables(1).Delete
+        .Range.Paragraphs(1).Range.Font.Hidden = True
+    End If
+    Set Shp = .Shapes.AddTextEffect(msoTextEffect1, "Template", "Arial", 1, False, False, 0, 0)
+    End With
+With Shp
+    .WrapFormat.Type = wdWrapBehind
+    .ZOrder msoBringToFront
+    .Height = sWdth / 2 ^ 0.5
+    .Width = .Height
+    .Rotation = 315
+    .RelativeHorizontalPosition = wdRelativeVerticalPositionMargin
+    .RelativeVerticalPosition = wdRelativeVerticalPositionMargin
+    .Left = wdShapeCenter
+    .Top = wdShapeCenter
+    With .Fill
+    .Visible = True
+    .Solid
+    .ForeColor.RGB = RGB(192, 192, 192)
+    End With
+End With
+End With
+Application.ScreenUpdating = True
+End Sub
